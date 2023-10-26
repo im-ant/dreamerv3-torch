@@ -1,0 +1,96 @@
+# @package agent
+_target_: src.agent.dreamer_agent.Dreamer
+_recursive_: False
+
+log_every: 1e4  # log every k steps
+
+batch_size: ${data.batch_size}
+batch_length: ${data.batch_length}  # batch size and length multiplied
+train_ratio: 512
+
+reset_every: 0  # reset every k steps
+
+explore_until: 0
+action_repeat: ${action_repeat}
+expl_behavior_type: 'greedy'
+collect_dyn_sample: True
+video_pred_log: True
+eval_state_mean: False
+actor_dist: ${agent.wm_config.actor_dist}  # TODO does this work?
+expl_amount: ${agent.wm_config.expl_amount}
+eval_noise: 0.0
+pretrain: 100
+
+behavior_stop_grad: True
+device: ${device}
+compile: True
+
+# config to put into the world model 
+wm_config:
+  ac_opt_eps: 1e-5
+  act: SiLU
+  action_unimix_ratio: 0.01
+  actor_dist: normal
+  actor_entropy: 3e-4
+  actor_grad_clip: 100
+  actor_init_std: 1.0
+  actor_layers: 2
+  actor_lr: 3e-5
+  actor_max_std: 1.0
+  actor_min_std: 0.1
+  actor_state_entropy: 0.0
+  actor_temp: 0.1
+  cont_layers: 2
+  cont_scale: 1.0
+  dataset_size: ${dataset_size}
+  decoder: {'mlp_keys': '$^', 'cnn_keys': 'image', 'act': 'SiLU', 'norm': 'LayerNorm', 'cnn_depth': 32, 'kernel_size': 4, 'minres': 4, 'mlp_layers': 2, 'mlp_units': 512, 'cnn_sigmoid': False, 'image_dist': 'mse', 'vector_dist': 'symlog_mse'}
+  device: ${device}
+  discount: 0.997
+  discount_lambda: 0.95
+  dyn_cell: gru_layer_norm
+  dyn_deter: 512
+  dyn_discrete: 32
+  dyn_hidden: 512
+  dyn_input_layers: 1
+  dyn_mean_act: none
+  dyn_min_std: 0.1
+  dyn_output_layers: 1
+  dyn_rec_depth: 1
+  dyn_scale: 0.5
+  dyn_shared: False
+  dyn_std_act: sigmoid2
+  dyn_stoch: 32
+  dyn_temp_post: True
+  encoder: {'mlp_keys': '$^', 'cnn_keys': 'image', 'act': 'SiLU', 'norm': 'LayerNorm', 'cnn_depth': 32, 'kernel_size': 4, 'minres': 4, 'mlp_layers': 2, 'mlp_units': 512, 'symlog_inputs': True}
+  expl_amount: 0.0
+  future_entropy: False
+  grad_clip: 1000
+  grad_heads: ['decoder', 'reward', 'cont']
+  imag_gradient: dynamics
+  imag_gradient_mix: 0.0
+  imag_horizon: 15
+  imag_sample: True
+  initial: learned
+  kl_free: 1.0
+  model_lr: 1e-4
+  norm: LayerNorm
+  num_actions: ???  # to be configured at run-time
+  opt: adam
+  opt_eps: 1e-8
+  precision: 32
+  rep_scale: 0.1
+  reward_EMA: True
+  reward_head: symlog_disc
+  reward_layers: 2
+  reward_scale: 1.0
+  slow_target_fraction: 0.02
+  slow_target_update: 1
+  slow_value_target: True
+  unimix_ratio: 0.01
+  units: 512
+  value_decay: 0.0
+  value_grad_clip: 100
+  value_head: symlog_disc
+  value_layers: 2
+  value_lr: 3e-5
+  weight_decay: 0.0

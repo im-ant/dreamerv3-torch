@@ -1,0 +1,50 @@
+defaults:
+  - envs: crafter
+  - agent: dreamer_agent
+  - agent/wm_config: crafter
+  - _self_  # defaults with be overwritten by below configs
+
+#   - agent/wm_config: crafter  # overrides & adds to agent 
+
+
+seed: 0
+deterministic_run: False
+device: 'cuda:0'
+
+offline_traindir: ''
+offline_evaldir: ''
+
+prefill_steps: 2500  # 
+
+# 
+train_steps: 1e6
+action_repeat: 1
+video_pred_log: True  # record predicted video?
+
+eval_every: 1e4
+log_every: 1e4
+env_frames_limit: 1000
+eval_episode_num: 10
+
+dataset_size: 1000000
+data:
+  batch_length: 64
+  batch_size: 16
+
+use_parallel_env: False 
+n_parallel_envs: 1
+
+
+
+# Hydra runner and configs
+# Config searchpath follows example from: https://github.com/facebookresearch/hydra/tree/main/examples/advanced/config_search_path
+hydra:
+  run:
+    dir: ./exp_result/${now:%Y.%m.%d}/test_${now:%H%M%S}
+  sweep:
+    dir: ./exp_result/${now:%Y.%m.%d}/${now:%H%M%S}
+    subdir: ${hydra.job.num}
+  job:
+    chdir: True  # let hydra change runtime cwd (default False for >=1.2)
+  searchpath:
+    - file://./src  # adding the ./src folder to the config search path
